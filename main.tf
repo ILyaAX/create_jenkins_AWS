@@ -17,13 +17,12 @@ resource "aws_instance" "jenkins" {
   vpc_security_group_ids = [aws_security_group.jenkins.id]
   user_data = <<-EOL
 #!/bin/bash
-wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | apt-key add -
+wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | apt-key add
 sh -c 'echo deb http://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
 apt update && apt upgrade -y
 apt install openjdk-11-jdk -y
-apt install jenkins
-cat /var/lib/jenkins/secrets/initialAdminPassword
-  EOL
+apt install jenkins -y
+EOL
   
   tags = {
     Name = "jenkins"
