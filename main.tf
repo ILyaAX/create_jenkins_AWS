@@ -20,12 +20,15 @@ resource "aws_instance" "jenkins" {
   ami = "ami-09e67e426f25ce0d7"
   instance_type = "t2.micro"
   vpc_security_group_ids = [aws_security_group.jenkins.id]
-  user_data = file("init_jenkins.sh")
   key_name = "awsmykey"
   tags = {
     Name = "jenkins"
   }
 }
+
+provisioner "remote-exec" {
+    inline = file("init_jenkins.sh")
+  }
 
 resource "aws_security_group" "jenkins" {
   name        = "http + ssh traffic"
