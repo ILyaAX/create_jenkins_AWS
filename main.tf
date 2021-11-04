@@ -11,6 +11,11 @@ provider "aws" {
   region = "us-east-1"
 }
 
+variable "ingressrules" {
+  type    = list(number)
+  default = [80, 443, 22, 8080]
+}
+
 resource "aws_instance" "jenkins" {
   ami = "ami-09e67e426f25ce0d7"
   instance_type = "t2.micro"
@@ -23,16 +28,19 @@ resource "aws_instance" "jenkins" {
 }
 
 resource "aws_security_group" "jenkins" {
-  name        = "all"
-  description = "all"
+  name        = "http + ssh traffic"
+  description = "http + ssh traffic"
 
-  ingress {
-      description      = "all"
-      from_port        = 0
-      to_port          = 0
-      protocol         = "-1"
-      cidr_blocks      = ["0.0.0.0/0"]
+  dynamic "ingress" {
+    iterator = port
+    for_each = var.ingressrules
+    content {
+      from_port   = port.value
+      to_port     = port.value
+      protocol    = "TCP"
+      cidr_blocks = ["0.0.0.0/0"]
     }
+  }
 
   egress {
       from_port        = 0
