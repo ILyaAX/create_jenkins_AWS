@@ -37,6 +37,13 @@ provisioner "remote-exec" {
     ]
   }
 
+connection {
+    type        = "ssh"
+    host        = self.public_ip
+    user        = "ubuntu"
+    private_key = file("~/.ssh/awsmykey.pem")
+  }
+
 resource "aws_security_group" "jenkins" {
   name        = "http + ssh traffic"
   description = "http + ssh traffic"
